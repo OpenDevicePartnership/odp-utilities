@@ -1,0 +1,18 @@
+[package]
+name = "debug-non-default"
+version = "0.1.0"
+edition = "2021"
+description = "A Debug-like macro for printing fields with non-default values"
+license = "MIT"
+authors = ["Dylan Knutson <dylanknutson@microsoft.com>"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { workspace = true, features = ["full", "extra-traits"] }
+quote.workspace = true
+proc-macro2.workspace = true
+
+[lints]
+workspace = true
