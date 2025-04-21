@@ -1,0 +1,34 @@
+[workspace.package]
+name = "odp-utilities"
+version = "0.1.0"
+edition = "2024"
+authors = ["Dylan Knutson <dylanknutson@microsoft.com>"]
+description = "Utilities and crates for embedded Rust development"
+license = "MIT"
+rust-version = "1.85.0"
+keywords = ["embedded", "rust", "utilities"]
+repository = "https://github.com/OpenDevicePartners/odp-utilities"
+
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.dependencies]
+syn = "2.0"
+num-traits = { version = "0.2.19", default-features = false }
+quote = "1.0"
+proc-macro2 = "1.0"
+bit-register = { path = "crates/bit-register" }
+debug-non-default = { path = "crates/debug-non-default" }
+
+[workspace.lints.clippy]
+suspicious = "forbid"
+correctness = "forbid"
+perf = "forbid"
+style = "forbid"
+
+[workspace.lints.rust]
+missing_docs = "warn"
+unsafe_code = "forbid"
+unexpected_cfgs = "forbid"
+unused_qualifications = "forbid"

@@ -1,0 +1,16 @@
+[package]
+name = "bit-register"
+version = "0.1.0"
+edition = "2021"
+description = "A procedural macro for defining bit-register types"
+license = "MIT"
+authors = ["Dylan Knutson <dylanknutson@microsoft.com>"]
+
+[dependencies]
+num-traits.workspace = true
+
+[dev-dependencies]
+proptest = "1.4.0"
+
+[lints]
+workspace = true
