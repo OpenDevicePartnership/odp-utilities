@@ -1,5 +1,4 @@
 [workspace.package]
-name = "odp-utilities"
 version = "0.1.0"
 edition = "2024"
 authors = ["Dylan Knutson <dylanknutson@microsoft.com>"]
@@ -15,7 +14,7 @@ members = ["crates/*"]
 
 [workspace.dependencies]
 syn = "2.0"
-num-traits = "0.2.19"
+num-traits = { version = "0.2.19", default-features = false }
 quote = "1.0"
 proc-macro2 = "1.0"
 bit-register = { path = "crates/bit-register" }
