@@ -145,12 +145,14 @@ jobs:
       fail-fast: false
       matrix:
         msrv: ["1.85"]
-    name: ubuntu / ${{ matrix.msrv }}
+        target: ["x86_64-unknown-linux-gnu", "aarch64-unknown-none"]
+    name: ubuntu / ${{ matrix.msrv }} / ${{ matrix.target }}
     steps:
       - uses: actions/checkout@v4
       - name: Install ${{ matrix.msrv }}
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.msrv }}
+          target: ${{ matrix.target }}
       - name: cargo +${{ matrix.msrv }} check
-        run: cargo check
+        run: cargo check --target ${{ matrix.target }}
