@@ -154,10 +154,32 @@ macro_rules! bit_register {
         }
     };
 
+     // Entrypoint with no endianness annotation, default to little endian
+     (
+        $(#[$attr:meta])*
+        $vis:vis struct $name:ident: $underlying_type:ty {
+            $(
+                $(#[$field_attr:meta])*
+                $field_vis:vis $field_name:ident: $field_type:tt => $field_bits:tt
+            ),* $(,)?
+        }
+    ) => {
+        bit_register! {
+            $(#[$attr])*
+            $vis struct $name: little_endian $underlying_type {
+                $(
+                    $(#[$field_attr])*
+                    $field_vis $field_name: $field_type => $field_bits
+                ),*
+            }
+        }
+    };
+
+    // Entrypoint with endianness annotation
     // Define a struct type which can be used as a bit register
     (
         $(#[$attr:meta])*
-        $vis:vis struct $name:ident: $underlying_type:ty {
+        $vis:vis struct $name:ident: $endianness:ident $underlying_type:ty {
             $(
                 $(#[$field_attr:meta])*
                 $field_vis:vis $field_name:ident: $field_type:tt => $field_bits:tt
@@ -180,6 +202,8 @@ macro_rules! bit_register {
             type Error = &'static str;
 
             fn try_from(value: $underlying_type) -> Result<Self, Self::Error> {
+
+                let value = bit_register!(@fix_endiannesss $endianness, value);
                 $(
                     let $field_name = bit_register!(@extract_bits $underlying_type, value, $field_type, $field_bits);
                 )*
@@ -201,12 +225,22 @@ macro_rules! bit_register {
                     // Handle bit packing for each field
                     value |= bit_register!(@pack_bits $underlying_type, self.$field_name, $field_name, $field_type, $field_bits);
                 )*
+                let value = bit_register!(@fix_endiannesss $endianness, value);
                 Ok(value)
             }
         }
 
         impl $crate::BitRegister<$underlying_type> for $name {}
     };
+
+    // swap bytes of `value` if big endian (assumes little endian platforms)
+    (@fix_endiannesss big_endian, $value:expr) => {
+        $value.swap_bytes()
+    };
+
+    // no-op if little endian
+    (@fix_endiannesss little_endian, $value:expr) => { $value };
+
 
     // Extract a single bit, convert to range
     (@extract_bits $underlying_type:ty, $value:expr, $field_type:ty, [$bit:literal]) => {
@@ -240,7 +274,6 @@ macro_rules! bit_register {
             $crate::TryFromBits::try_from_bits(extracted_value)?
         }
     };
-
 
     // Pack a single bit field
     (@pack_bits $underlying_type:ty, $field_value:expr, $field_name:ident, $field_type:tt, [$bit:literal]) => {
@@ -920,6 +953,115 @@ mod property_tests {
         let _result = RestrictedEnumRegister::try_from(too_large);
         // This might or might not error depending on how the macro works
         // (it may just mask the value to fit in 3 bits)
+    }
+
+    bit_register! {
+        #[derive(Debug, Clone, Copy, PartialEq)]
+        pub struct RxFifoHeader: big_endian u32 {
+            pub cycle_type: u8 => [24:31],
+            pub tag: u8 => [20:23],
+            pub length: u16 => [8:19],
+            pub byte0: u8 => [0:7],
+        }
+    }
+
+    #[rstest::rstest]
+    #[case(0x01_08_00_21, RxFifoHeader{
+        cycle_type: 0x21,
+        tag: 0x00,
+        length: 0x08,
+        byte0: 0x01,
+    })]
+    #[case(0x00_00_00_00, RxFifoHeader{
+        cycle_type: 0x00,
+        tag: 0x00,
+        length: 0x00,
+        byte0: 0x00,
+    })]
+    #[case(0x15_64_A2_03, RxFifoHeader{
+        cycle_type: 0x03,
+        tag: 0x0A,
+        length: 0x264,
+        byte0: 0x15,
+    })]
+    fn test_big_endian(#[case] input: u32, #[case] expected: RxFifoHeader) {
+        let register = RxFifoHeader::try_from(input).unwrap();
+        assert_eq!(register, expected, "0x{:X} => {:X?}", input, register);
+
+        let roundtrip: u32 = register.try_into().unwrap();
+        assert_eq!(roundtrip, input, "{:X?} => 0x{:X}", register, roundtrip);
+    }
+
+    // This is the example from the README.md
+    #[test]
+    fn test_readme_be_example() {
+        bit_register! {
+            #[derive(Debug, PartialEq)]
+            pub struct BigEndianRegister: big_endian u32 { // Specify big_endian here
+                pub field_a: u8 => [0:7],
+                pub field_b: u16 => [8:23],
+                pub field_c: u8 => [24:31]
+            }
+        }
+
+        // Example: We want to represent the conceptual big-endian u32 represented by the bytes [0x78, 0x56, 0x34, 0x12].
+        // In this conceptual big-endian number:
+        // - `field_c` (bits 24-31) corresponds to the most significant byte: 0x12.
+        // - `field_b` (bits 8-23) corresponds to the middle bytes: 0x3456.
+        // - `field_a` (bits 0-7) corresponds to the least significant byte: 0x78.
+        let register = BigEndianRegister {
+            field_a: 0x78,
+            field_b: 0x3456, // This is 0x3456 for the conceptual BE value 0x12345678
+            field_c: 0x12,
+        };
+
+        // When converting to a u32 (e.g., for storage or network transmission):
+        // On a little-endian platform, the big-endian value 0x12345678 is represented as 0x78563412.
+        let bits: u32 = register.try_into().unwrap();
+        assert_eq!(bits, u32::from_be_bytes([0x78, 0x56, 0x34, 0x12]));
+
+        // To create a register from a u32 value:
+        // The input `raw_value_from_platform` is a u32 in the platform's native endianness.
+        // Assume this value was obtained by reading a big-endian data source.
+        // For instance, if a hardware register or network packet contains the byte sequence [0x12, 0x34, 0x56, 0x78]
+        // (which is 0x12345678 in big-endian), reading this as a u32 on a little-endian platform
+        // will result in `raw_value_from_platform` being 0x78563412.
+        let raw_value_from_platform = u32::from_be_bytes([0x78, 0x56, 0x34, 0x12]);
+        let register_from_bits = BigEndianRegister::try_from(raw_value_from_platform).unwrap();
+
+        // Inside `try_from` for a `big_endian` register, `raw_value_from_platform` (0x[78, 56, 34, 12])
+        // is byte-swapped to its conceptual big-endian form (0x[12, 34, 56, 78]).
+        // Fields are then extracted from this conceptual form (0x[12, 34, 56, 78]):
+        // - field_a (bits 0-7) will be 0x78.
+        // - field_b (bits 8-23) will be 0x3456.
+        // - field_c (bits 24-31) will be 0x12.
+        assert_eq!(register_from_bits.field_a, 0x78);
+        assert_eq!(register_from_bits.field_b, 0x3456);
+        assert_eq!(register_from_bits.field_c, 0x12);
+
+        bit_register! {
+            #[derive(Debug, PartialEq)]
+            pub struct LittleEndianRegister: little_endian u16 { // Explicitly little_endian
+                pub low_byte: u8 => [0:7],
+                pub high_byte: u8 => [8:15]
+            }
+        }
+
+        // Contrast this with a little-endian register
+        let le_register_value = u16::from_le_bytes([0x34, 0x12]);
+
+        let le_bits: u16 = LittleEndianRegister {
+            low_byte: 0x34,
+            high_byte: 0x12,
+        }
+        .try_into()
+        .unwrap();
+
+        assert_eq!(le_bits, le_register_value);
+
+        let le_reg_from_bits = LittleEndianRegister::try_from(le_register_value).unwrap();
+        assert_eq!(le_reg_from_bits.low_byte, 0x34);
+        assert_eq!(le_reg_from_bits.high_byte, 0x12);
     }
 
     // Tests for mixed fields
