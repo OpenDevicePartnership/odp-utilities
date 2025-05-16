@@ -11,6 +11,7 @@ num-traits.workspace = true
 
 [dev-dependencies]
 proptest = "1.4.0"
+rstest = "0.25.0"
 
 [lints]
 workspace = true
