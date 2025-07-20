@@ -21,13 +21,13 @@ bit-register = { path = "crates/bit-register" }
 debug-non-default = { path = "crates/debug-non-default" }
 
 [workspace.lints.clippy]
-suspicious = "forbid"
-correctness = "forbid"
-perf = "forbid"
-style = "forbid"
+suspicious = "deny"
+correctness = "deny"
+perf = "deny"
+style = "deny"
 
 [workspace.lints.rust]
 missing_docs = "warn"
-unsafe_code = "forbid"
-unexpected_cfgs = "forbid"
-unused_qualifications = "forbid"
+unsafe_code = "deny"
+unexpected_cfgs = "deny"
+unused_qualifications = "deny"
