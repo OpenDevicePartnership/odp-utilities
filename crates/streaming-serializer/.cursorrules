@@ -1,0 +1,4 @@
+- this project is `no_std` and cannot use the `alloc` crate or types like `Box`
+- the project can use `extern crate std` if any usages are prefixed with `#[cfg(test)]`, for instance for debugging
+- avoid using `unsafe` if possible. focus on fixing errors arising from lifetimes and the borrow checker over using `unsafe`.
+- run tests with `timeout 3 cargo +nightly miri test` to ensure that hanging tests do not block development

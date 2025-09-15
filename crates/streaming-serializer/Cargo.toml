@@ -1,0 +1,18 @@
+[package]
+name = "streaming-serializer"
+version = "0.1.0"
+edition = "2024"
+repository = "https://github.com/dymk/todo"
+readme = "README.md"
+license = "MIT"
+keywords = ["writer", "async", "no_std", "buffer", "incremental", "streaming"]
+authors = ["Dylan Knutson <dymk@dymk.co>"]
+categories = ["encoding", "serialization", "async", "streaming"]
+description = "A streaming serializer for `no_std` environments with async support."
+
+[dependencies]
+num-traits.workspace = true
+pin-project = { version = "1.1.10", default-features = false }
+
+[lints]
+workspace = true
