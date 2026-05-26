@@ -13,6 +13,12 @@ criteria = "safe-to-deploy"
 delta = "1.0.3 -> 1.0.4"
 notes = "Delta: macro refactor to tt-munching. No unsafe. Assisted-by: copilot-cli:claude-opus-4.6"
 
+[[audits.errno]]
+who = "Jerry Xie <jerryxie@microsoft.com>"
+criteria = "safe-to-run"
+version = "0.3.11"
+notes = "Full: errno accessor. Assisted-by: copilot-cli:claude-opus-4.6"
+
 [[audits.futures-core]]
 who = "Jerry Xie <jerryxie@microsoft.com>"
 criteria = "safe-to-deploy"
@@ -24,6 +30,12 @@ who = "Jerry Xie <jerryxie@microsoft.com>"
 criteria = "safe-to-deploy"
 delta = "0.3.31 -> 0.3.32"
 notes = "Delta: AtomicWaker state-release simplified. No new unsafe. Assisted-by: copilot-cli:claude-opus-4.6"
+
+[[audits.proc-macro-crate]]
+who = "Jerry Xie <jerryxie@microsoft.com>"
+criteria = "safe-to-run"
+version = "3.3.0"
+notes = "Full: proc-macro crate path helper. Assisted-by: copilot-cli:claude-opus-4.6"
 
 [[audits.proc-macro2]]
 who = "Jerry Xie <jerryxie@microsoft.com>"
@@ -37,6 +49,24 @@ criteria = "safe-to-deploy"
 delta = "1.0.94 -> 1.0.95"
 notes = "Delta: SourceFile removed. No unsafe. Assisted-by: copilot-cli:claude-opus-4.6"
 
+[[audits.r-efi]]
+who = "Jerry Xie <jerryxie@microsoft.com>"
+criteria = "safe-to-run"
+version = "5.2.0"
+notes = "Full: UEFI type defs. Assisted-by: copilot-cli:claude-opus-4.6"
+
+[[audits.rand_xorshift]]
+who = "Jerry Xie <jerryxie@microsoft.com>"
+criteria = "safe-to-run"
+version = "0.3.0"
+notes = "Full: simple xorshift RNG. No unsafe. Assisted-by: copilot-cli:claude-opus-4.6"
+
+[[audits.slab]]
+who = "Jerry Xie <jerryxie@microsoft.com>"
+criteria = "safe-to-run"
+version = "0.4.9"
+notes = "Full: pre-allocated storage. Assisted-by: copilot-cli:claude-opus-4.6"
+
 [[audits.syn]]
 who = "Jerry Xie <jerryxie@microsoft.com>"
 criteria = "safe-to-deploy"
@@ -48,6 +78,18 @@ who = "Jerry Xie <jerryxie@microsoft.com>"
 criteria = "safe-to-deploy"
 delta = "2.0.109 -> 2.0.99"
 notes = "Downgrade delta: parser logic adjustments. Pre-existing unsafe unchanged. Assisted-by: copilot-cli:claude-opus-4.6"
+
+[[audits.syn]]
+who = "Jerry Xie <jerryxie@microsoft.com>"
+criteria = "safe-to-deploy"
+delta = "2.0.109 -> 2.0.100"
+notes = "Downgrade delta: parser adjustments. No new unsafe. Assisted-by: copilot-cli:claude-opus-4.6"
+
+[[audits.syn]]
+who = "Jerry Xie <jerryxie@microsoft.com>"
+criteria = "safe-to-deploy"
+delta = "2.0.109 -> 2.0.100"
+notes = "Downgrade delta: parser adjustments. No new unsafe. Assisted-by: copilot-cli:claude-opus-4.6"
 
 [[audits.syn]]
 who = "Jerry Xie <jerryxie@microsoft.com>"

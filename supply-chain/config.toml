@@ -21,3 +21,51 @@ audit-as-crates-io = false
 
 [policy.debug-non-default]
 audit-as-crates-io = false
+
+[[exemptions.getrandom]]
+version = "0.3.2"
+criteria = "safe-to-run"
+
+[[exemptions.hashbrown]]
+version = "0.15.3"
+criteria = "safe-to-run"
+
+[[exemptions.linux-raw-sys]]
+version = "0.9.4"
+criteria = "safe-to-run"
+
+[[exemptions.proptest]]
+version = "1.6.0"
+criteria = "safe-to-run"
+
+[[exemptions.rstest]]
+version = "0.25.0"
+criteria = "safe-to-run"
+
+[[exemptions.rstest_macros]]
+version = "0.25.0"
+criteria = "safe-to-run"
+
+[[exemptions.rustix]]
+version = "1.0.5"
+criteria = "safe-to-run"
+
+[[exemptions.wasi]]
+version = "0.11.0+wasi-snapshot-preview1"
+criteria = "safe-to-run"
+
+[[exemptions.wasi]]
+version = "0.14.2+wasi-0.2.4"
+criteria = "safe-to-run"
+
+[[exemptions.windows-sys]]
+version = "0.59.0"
+criteria = "safe-to-run"
+
+[[exemptions.zerocopy]]
+version = "0.8.24"
+criteria = "safe-to-run"
+
+[[exemptions.zerocopy-derive]]
+version = "0.8.24"
+criteria = "safe-to-run"
