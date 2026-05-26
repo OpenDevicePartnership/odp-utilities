@@ -253,6 +253,18 @@ criteria = "safe-to-deploy"
 delta = "1.0.18 -> 1.0.24"
 notes = "Delta: Unicode 16.0->17.0 table update. Pure data. Assisted-by: copilot-cli:claude-opus-4.6"
 
+[[audits.wasi]]
+who = "Jerry Xie <jerryxie@microsoft.com>"
+criteria = "safe-to-run"
+version = "0.11.0+wasi-snapshot-preview1"
+notes = "WASI preview1 FFI bindings. Auto-generated. Assisted-by: copilot-cli:claude-opus-4.6"
+
+[[audits.wasi]]
+who = "Jerry Xie <jerryxie@microsoft.com>"
+criteria = "safe-to-run"
+version = "0.14.2+wasi-0.2.4"
+notes = "WASI preview2 component model bindings. Auto-generated. Assisted-by: copilot-cli:claude-opus-4.6"
+
 [[audits.windows-sys]]
 who = "Jerry Xie <jerryxie@microsoft.com>"
 criteria = "safe-to-deploy"

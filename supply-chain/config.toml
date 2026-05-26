@@ -21,11 +21,3 @@ audit-as-crates-io = false
 
 [policy.debug-non-default]
 audit-as-crates-io = false
-
-[[exemptions.wasi]]
-version = "0.11.0+wasi-snapshot-preview1"
-criteria = "safe-to-run"
-
-[[exemptions.wasi]]
-version = "0.14.2+wasi-0.2.4"
-criteria = "safe-to-run"
